@@ -5,14 +5,19 @@ import pydotplus
 from sklearn.tree import DecisionTreeClassifier
 import matplotlib.pyplot as plt
 import matplotlib.image as pltimg
-
 from mysql.connector import connect, Error
+
+with open('pss.txt') as file:
+    lines = file.readlines()
+    lines = [line.rstrip() for line in lines]
+password = lines[0]
+db = lines[1]
 
 mydb = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="1378@1378",
-    database="sanjeman",
+    password=password,
+    database=db,
     use_pure=True
 )
 
@@ -32,7 +37,7 @@ for item in my_cursor:
     university_name_list.append(item)
 
 
-df = pandas.read_csv("Result_41.csv")
+df = pandas.read_csv("Result_32.csv")
 for title in steps_title_list:
     if title[0] == 'نیازمند تعیین وضعیت':
         d_steps_title[title[0]] = 0
@@ -50,8 +55,16 @@ i = 0
 for title in university_name_list:
     d_uni_name[title] = i
     i += 1
-print(d_steps_title)
+
 df['steps_title'] = df['steps_title'].map(d_steps_title)
 df['university'] = df['university'].map(d_uni_name)
-print(df['university'])
+features = ['job_applicant_id', 'age', 'marriage_status', 'lanquage_exists',
+            'degree','university','gpa','job_contract_type','edu_interval',
+            'skill_require','exprience_exists','skill_exists']
+
+X = df[features]
+y = df['steps_title']
+
+print(X)
+print(y)
 
