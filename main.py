@@ -41,13 +41,13 @@ df = pandas.read_csv("Result_32.csv")
 for title in steps_title_list:
     if title[0] == 'نیازمند تعیین وضعیت':
         d_steps_title[title[0]] = 0
-    if title[0] == 'تایید برای مصاحبه':
+    elif title[0] == 'تایید برای مصاحبه':
         d_steps_title[title[0]] = 1
-    if title[0] == 'استخدام شده':
+    elif title[0] == 'استخدام شده':
         d_steps_title[title[0]] = 2
-    if title[0] == 'رد شده':
+    elif title[0] == 'رد شده':
         d_steps_title[title[0]] = 3
-    if title[0] == 'انصراف از مصاحبه':
+    elif title[0] == 'انصراف از مصاحبه':
         d_steps_title[title[0]] = 4
     else:
         d_steps_title[title[0]] = 6
@@ -56,15 +56,29 @@ for title in university_name_list:
     d_uni_name[title] = i
     i += 1
 
+print(d_steps_title)
 df['steps_title'] = df['steps_title'].map(d_steps_title)
+pandas.set_option('display.max_rows', df.shape[0]+1)
+print(df['gender'])
+pandas.set_option('display.max_rows', df.shape[0]+1)
+# print(df['steps_title'])
 df['university'] = df['university'].map(d_uni_name)
-features = ['job_applicant_id', 'age', 'marriage_status', 'lanquage_exists',
-            'degree','university','gpa','job_contract_type','edu_interval',
-            'skill_require','exprience_exists','skill_exists']
+features = ['gender']
 
 X = df[features]
 y = df['steps_title']
 
 print(X)
 print(y)
+
+
+dtree = DecisionTreeClassifier()
+dtree = dtree.fit(X, y)
+data = tree.export_graphviz(dtree, out_file=None, feature_names=features)
+graph = pydotplus.graph_from_dot_data(data)
+graph.write_png('mydecisiontree.png')
+
+img=pltimg.imread('mydecisiontree.png')
+imgplot = plt.imshow(img)
+plt.show()
 
