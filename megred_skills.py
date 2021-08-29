@@ -7,7 +7,7 @@ from datetime import date
 
 skills = dict()
 education = dict()
-header = ['job_applicant_id', 'gender', 'age', 'education', 'skill']
+header = ['job_applicant_id', 'gender', 'age', 'education', 'skill', 'steps_title']
 
 
 with open('pss.txt') as file:
@@ -39,7 +39,6 @@ def merge_skills():
     my_cursor.execute("SELECT DISTINCT  job_applicant_id, GROUP_CONCAT(distinct skills_title SEPARATOR ', ') FROM useful_data GROUP BY job_applicant_id;")
 
     for item in my_cursor:
-        print(item)
         skills[item[0]] = count_skills(item[1])
 
 
@@ -63,9 +62,9 @@ def calculate_age(born):
 def get_applicant_info(job_applicant_id):
     score_skills = skills[job_applicant_id]
     score_education = education[job_applicant_id]
-    my_cursor.execute("SELECT DISTINCT gender, birthday FROM useful_data WHERE " + str(job_applicant_id) + " = job_applicant_id;")
+    my_cursor.execute("SELECT DISTINCT gender, birthday, steps_title FROM useful_data WHERE " + str(job_applicant_id) + " = job_applicant_id;")
     for item in my_cursor:
-        return item[0], calculate_age(item[1])
+        return item[0], calculate_age(item[1]), item[2]
 
 
 def write_file():
@@ -76,8 +75,8 @@ def write_file():
         for job_applicant_id in skills.keys():
             score_skills = skills[job_applicant_id]
             score_education = education[job_applicant_id]
-            gender, age = get_applicant_info(job_applicant_id)
-            writer.writerow([job_applicant_id, gender, age, score_education, score_skills])
+            gender, age, steps_title = get_applicant_info(job_applicant_id)
+            writer.writerow([job_applicant_id, gender, age, score_education, score_skills, steps_title])
 
 
 merge_skills()
