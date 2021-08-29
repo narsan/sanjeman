@@ -4,30 +4,38 @@ import random
 
 data_accepted = []
 data_rejected = []
+percent_test = 0.1
+
+
+def get_column_steps(header):
+    return header.index('steps_title')
 
 
 def get_data(path):
     first_row = True
+    index_steps = None
     with open(path, newline='', encoding='utf-8') as csv_file:
         reader = csv.reader(csv_file, delimiter=',', quotechar='|')
         for row in reader:
             if first_row:
                 first_row = False
                 header = row
+                index_steps = header.index('steps_title')
                 continue
 
-            if row[13] == 'استخدام شده':
-                data_accepted.append(row)
+            if index_steps:
+                if row[index_steps] == 'استخدام شده':
+                    data_accepted.append(row)
 
-            elif row[13] == 'رد شده':
-                data_rejected.append(row)
+                elif row[index_steps] == 'رد شده':
+                    data_rejected.append(row)
 
     # print(data)
     return header
 
 
 def separate_test_data():
-    num_test = int(len(data_accepted)/10)
+    num_test = int(len(data_accepted) * percent_test)
     random.shuffle(data_accepted)
     random.shuffle(data_rejected)
 
