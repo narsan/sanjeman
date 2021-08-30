@@ -7,7 +7,7 @@ from datetime import date
 
 skills = dict()
 education = dict()
-header = ['job_applicant_id', 'gender', 'age', 'education', 'skill', 'marriage_status', 'steps_title']
+header = ['job_applicant_id', 'gender', 'age', 'marriage_status', 'language', 'education', 'skill', 'steps_title']
 
 
 with open('pss.txt') as file:
@@ -58,7 +58,7 @@ def get_marriage_status(marriage):
     if marriage_status != 0 and marriage != 1:
         return -1
 
-    return marriage
+    return marriage_status
 
 
 def calculate_age(born):
@@ -72,13 +72,15 @@ def calculate_age(born):
 def get_applicant_info(job_applicant_id):
     score_skills = skills[job_applicant_id]
     score_education = education[job_applicant_id]
-    query = "SELECT DISTINCT gender, birthday, JSON_UNQUOTE(json_extract(marriage,'$.status')), steps_title " + \
+    query = "SELECT DISTINCT gender, birthday, JSON_UNQUOTE(json_extract(marriage,'$.status')), " \
+            "(useful_data.languages IS not NULL) AS lanquage_exists, " \
+            "steps_title " + \
             "FROM useful_data WHERE " \
             + str(job_applicant_id) + " = job_applicant_id;"
 
     my_cursor.execute(query)
     for item in my_cursor:
-        return item[0], calculate_age(item[1]), get_marriage_status(item[2]), item[3]
+        return [item[0], calculate_age(item[1]), get_marriage_status(item[2]), item[3]], item[4]
 
 
 def write_file():
@@ -88,13 +90,10 @@ def write_file():
         for job_applicant_id in skills.keys():
             score_skills = skills[job_applicant_id]
             score_education = education[job_applicant_id]
-            gender, age, marriage, steps_title = get_applicant_info(job_applicant_id)
-            writer.writerow([job_applicant_id, gender, age, score_education, score_skills, marriage, steps_title])
+            personal_info, steps_title = get_applicant_info(job_applicant_id)
+            writer.writerow([job_applicant_id] + personal_info + [score_education] + [score_skills] + [steps_title])
 
 
 merge_skills()
 merge_education()
 write_file()
-#left_df = merge_skills()
-#merged = df.merge(left_df, left_on='job_applicant_id', right_index=True, how='left')
-#merged.to_csv('merge.csv', encoding='utf-8')
