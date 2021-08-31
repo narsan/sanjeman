@@ -9,8 +9,8 @@ from personal_info import PersonalInfo
 
 skills = dict()
 education = dict()
-header = ['job_applicant_id', 'gender', 'age', 'marriage_status', 'language', 'steps_title',
-          'degree', 'skill', 'num_prev_company', 'work_interval']
+header = ['job_applicant_id', 'gender', 'age', 'marriage_status', 'language',
+          'degree', 'skill', 'num_prev_company', 'work_interval', 'steps_title']
 
 resumes = dict()
 

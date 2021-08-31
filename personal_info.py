@@ -111,10 +111,10 @@ class PersonalInfo:
 
     def get_vector(self):
         personal_info = [self.job_applicant_id, self.gender, self.age, self.marriage_status,
-                         self.has_language, self.steps_title]
+                         self.has_language]
 
         education_info = [self.get_max_degree()]
         skill_info = [self.num_skills]
         work_exp_info = [len(self.work_experiences), self.get_work_interval()]
-        return personal_info + education_info + skill_info + work_exp_info
+        return personal_info + education_info + skill_info + work_exp_info + [self.steps_title]
 
