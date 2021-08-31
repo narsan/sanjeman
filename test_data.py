@@ -4,7 +4,7 @@ import random
 
 data_accepted = []
 data_rejected = []
-percent_test = 0.1
+percent_test = 0.2
 
 
 def get_column_steps(header):
