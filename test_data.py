@@ -58,7 +58,7 @@ def write_in_file(data, path, header):
             writer.writerow(row)
 
 
-header = get_data('Result_32.csv')
+header = get_data('final_data.csv')
 train, test = separate_test_data()
 write_in_file(train, 'train.csv', header)
 write_in_file(test, 'test.csv', header)

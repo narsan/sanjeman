@@ -4,11 +4,15 @@ import mysql.connector
 import pandas
 from datetime import date
 
+from personal_info import PersonalInfo
+
 
 skills = dict()
 education = dict()
-header = ['job_applicant_id', 'gender', 'age', 'marriage_status', 'language', 'education', 'skill', 'steps_title']
+header = ['job_applicant_id', 'gender', 'age', 'marriage_status', 'language', 'steps_title',
+          'degree', 'skill', 'num_prev_company', 'work_interval']
 
+resumes = dict()
 
 with open('pss.txt') as file:
     lines = file.readlines()
@@ -69,14 +73,88 @@ def calculate_age(born):
     return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
 
 
+def add_personal_info():
+    query = "SELECT DISTINCT job_applicant_id, gender, birthday,  JSON_UNQUOTE(json_extract(marriage,'$.status')), " \
+            "(useful_data.languages IS not NULL) AS lanquage_exists, job_title, " \
+            "steps_title " \
+            "FROM useful_data;"
+
+    my_cursor.execute(query)
+    for item in my_cursor:
+        job_applicant_id = item[0]
+        if job_applicant_id not in resumes:
+            gender = item[1]
+            birthday = item[2]
+            marriage = item[3]
+            language = item[4]
+            job_title = item[5]
+            steps_title = item[6]
+            person = PersonalInfo(job_applicant_id, steps_title, job_title)
+            person.set_gender(gender)
+            person.set_age(birthday)
+            person.set_marriage_status(marriage)
+            person.set_language(language)
+            resumes[job_applicant_id] = person
+
+
+def add_education():
+    query = "SELECT DISTINCT job_applicant_id, " \
+            "degree, field, university, gpa, began_edu_at, finished_edu_at " \
+            "FROM useful_data"
+
+    my_cursor.execute(query)
+    for item in my_cursor:
+        job_applicant_id = item[0]
+        degree = item[1]
+        field = item[2]
+        university = item[3]
+        gpa = item[4]
+        began_edu_at = item[5]
+        finished_edu_at = item[6]
+        resumes[job_applicant_id].add_education(field, university, gpa, began_edu_at, finished_edu_at, degree)
+
+
+def add_skills():
+    query = "SELECT DISTINCT job_applicant_id, " \
+            "skills_title " \
+            "FROM useful_data"
+
+    my_cursor.execute(query)
+    for item in my_cursor:
+        job_applicant_id = item[0]
+        skill = item[1]
+        resumes[job_applicant_id].add_skill(skill)
+
+
+def add_work_exp():
+    query = "SELECT DISTINCT useful_data.job_applicant_id, " \
+            "company, useful_data.field, began_at, finished_at, useful_data.quit_reason " \
+            "FROM useful_data " \
+            "LEFT JOIN work_experiences ON work_experiences.job_applicant_id = useful_data.job_applicant_id"
+
+    my_cursor.execute(query)
+    for item in my_cursor:
+        job_applicant_id = item[0]
+        company = item[1]
+        field = item[2]
+        began_at = item[3]
+        finished_at = item[4]
+        quit_reason = item[5]
+        resumes[job_applicant_id].add_work_exp(company, field, quit_reason, began_at, finished_at)
+
+
+def get_people_data():
+    add_personal_info()
+    add_education()
+    add_skills()
+    add_work_exp()
+
+
 def get_applicant_info(job_applicant_id):
-    score_skills = skills[job_applicant_id]
-    score_education = education[job_applicant_id]
-    query = "SELECT DISTINCT gender, birthday, JSON_UNQUOTE(json_extract(marriage,'$.status')), " \
+    query = "SELECT DISTINCT job_applicant_id, gender, birthday, JSON_UNQUOTE(json_extract(marriage,'$.status')), " \
             "(useful_data.languages IS not NULL) AS lanquage_exists, " \
             "steps_title " + \
-            "FROM useful_data WHERE " \
-            + str(job_applicant_id) + " = job_applicant_id;"
+            "FROM useful_data"
 
     my_cursor.execute(query)
     for item in my_cursor:
@@ -87,13 +165,10 @@ def write_file():
     with open('final_data.csv', 'w', encoding='utf-8', newline='') as csv_file:
         writer = csv.writer(csv_file)
         writer.writerow(header)
-        for job_applicant_id in skills.keys():
-            score_skills = skills[job_applicant_id]
-            score_education = education[job_applicant_id]
-            personal_info, steps_title = get_applicant_info(job_applicant_id)
-            writer.writerow([job_applicant_id] + personal_info + [score_education] + [score_skills] + [steps_title])
+        for job_applicant_id in resumes:
+            row = resumes[job_applicant_id].get_vector()
+            writer.writerow(row)
 
 
-merge_skills()
-merge_education()
+get_people_data()
 write_file()
