@@ -9,7 +9,7 @@ from personal_info import PersonalInfo
 
 skills = dict()
 education = dict()
-header = ['job_applicant_id', 'gender', 'age', 'marriage_status', 'language', 'contract_type'
+header = ['job_applicant_id', 'gender', 'age', 'marriage_status', 'language', 'contract_type',
           'degree', 'average_gpa', 'skill', 'num_prev_company', 'work_interval', 'steps_title']
 
 resumes = dict()
@@ -177,10 +177,11 @@ def write_tagged_data():
         writer.writerow(header)
         for job_applicant_id in resumes:
             row = resumes[job_applicant_id].get_vector()
+            print(row)
             if row[-1] == 'رد شده' or row[-1] == 'استخدام شده':
                 writer.writerow(row)
 
 
 get_people_data()
-# write_file()
+write_file()
 write_tagged_data()
