@@ -43,7 +43,7 @@ class WorkExperience:
 
 
 class PersonalInfo:
-    def __init__(self, job_applicant_id, steps_title, job_title):
+    def __init__(self, job_applicant_id, steps_title, job_title, contract_type):
         self.job_applicant_id = job_applicant_id
         self.gender = -1
         self.age = -1
@@ -59,6 +59,8 @@ class PersonalInfo:
             self.steps_title = steps_title
         else:
             self.steps_title = -1
+
+        self.contract_type = contract_type
 
     def set_gender(self, gender):
         if not gender:
@@ -109,11 +111,23 @@ class PersonalInfo:
 
         return sum_work_interval
 
+    def get_average_gpa(self):
+        sum = 0
+        num = 0
+        for education in self.educations:
+            if education.gpa:
+                sum += education.gpa
+                num += 1
+
+        if num == 0:
+            return -1
+        return sum/num
+
     def get_vector(self):
         personal_info = [self.job_applicant_id, self.gender, self.age, self.marriage_status,
-                         self.has_language]
+                         self.has_language, self.contract_type]
 
-        education_info = [self.get_max_degree()]
+        education_info = [self.get_max_degree(), self.get_average_gpa()]
         skill_info = [self.num_skills]
         work_exp_info = [len(self.work_experiences), self.get_work_interval()]
         return personal_info + education_info + skill_info + work_exp_info + [self.steps_title]
