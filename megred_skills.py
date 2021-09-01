@@ -170,5 +170,16 @@ def write_file():
             writer.writerow(row)
 
 
+def write_tagged_data():
+    with open('tagged_data.csv', 'w', encoding='utf-8', newline='') as csv_file:
+        writer = csv.writer(csv_file)
+        writer.writerow(header)
+        for job_applicant_id in resumes:
+            row = resumes[job_applicant_id].get_vector()
+            if row[-1] == 'رد شده' or row[-1] == 'استخدام شده':
+                writer.writerow(row)
+
+
 get_people_data()
-write_file()
+# write_file()
+write_tagged_data()
