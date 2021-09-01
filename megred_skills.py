@@ -29,7 +29,6 @@ mydb = mysql.connector.connect(
 )
 
 my_cursor = mydb.cursor()
-df = pandas.read_csv("Result_32.csv")
 
 
 def count_skills(string_skills):
