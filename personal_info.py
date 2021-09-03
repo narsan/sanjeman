@@ -1,8 +1,9 @@
+import ast
 from datetime import date
 
 
 class Education:
-    def __init__(self,  field, university, gpa, began_at, finished_at, degree):
+    def __init__(self, field, university, gpa, began_at, finished_at, degree):
         self.field = field
         self.university = university
         self.gpa = gpa
@@ -42,6 +43,36 @@ class WorkExperience:
         return finish.year - began_at.year - ((finish.month, finish.day) < (began_at.month, began_at.day))
 
 
+def map_language(lang):
+    if lang == 'persian':
+        lang = '1'
+    elif lang == 'english':
+        lang = '2'
+    elif lang == 'arabic':
+        lang = '3'
+    elif lang == 'germany':
+        lang = '4'
+    elif lang == 'french':
+        lang = '5'
+    elif lang == 'spanish':
+        lang = '6'
+    else:
+        lang = '18'
+    return lang
+
+
+def map_level(lvl):
+    if lvl == 'beginner':
+        lvl = '1'
+    elif lvl == 'intermediate':
+        lvl = '2'
+    elif lvl == 'advanced':
+        lvl = '3'
+    elif lvl == 'native':
+        lvl = '4'
+    return lvl
+
+
 class PersonalInfo:
     def __init__(self, job_applicant_id, steps_title, job_title, contract_type):
         self.job_applicant_id = job_applicant_id
@@ -49,7 +80,7 @@ class PersonalInfo:
         self.age = -1
         self.num_skills = 0
         self.marriage_status = -1
-        self.has_language = 0
+        self.language = []
         self.skills = []
         self.educations = []
         self.work_experiences = []
@@ -82,7 +113,46 @@ class PersonalInfo:
             self.marriage_status = -1
 
     def set_language(self, language):
-        self.has_language = language
+        if language is not None:
+            res = ast.literal_eval(language.strip("[]"))
+            if 'title' not in res and type(res[0]) == dict:
+                num = len(res)
+                for languages in res:
+                    try:
+                        if 'english_title' in languages['title']:
+                            title = languages['title']['english_title']
+                            title = map_language(title)
+                            languages['title'] = title
+                            level = languages['level']['english_title']
+                            level = map_level(level)
+                            languages['level'] = level
+                            num = num * int(level)
+                            # print(num)
+                        else:
+                            num = num * int(languages['level'])
+                    except:
+                        num = num * int(languages['level'])
+                self.language = num
+            elif 'title' in res and type(res['title']) == dict:
+                num = 1
+                title = res['title']['english_title']
+                title = map_language(title)
+                res['title'] = title
+                level = res['level']['english_title']
+                level = map_level(level)
+                res['level'] = level
+                num = num * int(level)
+                self.language = num
+            else:
+                if 'title' in res:
+                    # print(res)
+                    num = 1 * int(res['level'])
+                    self.language = num
+        else:
+            self.language = -1
+
+    def get_language(self):
+        return self.language
 
     def add_skill(self, skill):
         self.skills.append(skill)
@@ -121,14 +191,13 @@ class PersonalInfo:
 
         if num == 0:
             return -1
-        return sum/num
+        return sum / num
 
     def get_vector(self):
         personal_info = [self.job_applicant_id, self.gender, self.age, self.marriage_status,
-                         self.has_language, self.contract_type]
+                         self.language, self.contract_type]
 
         education_info = [self.get_max_degree(), self.get_average_gpa()]
         skill_info = [self.num_skills]
         work_exp_info = [len(self.work_experiences), self.get_work_interval()]
         return personal_info + education_info + skill_info + work_exp_info + [self.steps_title]
-
