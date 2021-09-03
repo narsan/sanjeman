@@ -75,7 +75,7 @@ def calculate_age(born):
 def add_personal_info():
     query = "SELECT DISTINCT job_applicant_id, gender, birthday,  JSON_UNQUOTE(json_extract(marriage,'$.status')), " \
             "(useful_data.languages IS not NULL) AS lanquage_exists, job_title, " \
-            "steps_title, job_contract_type " \
+            "steps_title, job_contract_type, job_skills " \
             "FROM useful_data;"
 
     my_cursor.execute(query)
@@ -89,7 +89,8 @@ def add_personal_info():
             job_title = item[5]
             steps_title = item[6]
             contract_type = item[7]
-            person = PersonalInfo(job_applicant_id, steps_title, job_title, contract_type)
+            job_skills = item[8]
+            person = PersonalInfo(job_applicant_id, steps_title, job_title, contract_type, job_skills)
             person.set_gender(gender)
             person.set_age(birthday)
             person.set_marriage_status(marriage)

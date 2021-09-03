@@ -1,4 +1,6 @@
+import math
 from datetime import date
+from parsivar import  Normalizer, Tokenizer, FindStems, POSTagger
 
 
 class Education:
@@ -11,10 +13,10 @@ class Education:
 
     def calculate_interval(self, began_at, finished_at):
         if not began_at:
-            return -1
+            return 0
 
         if type(began_at) != type(date.today()):
-            return -1
+            return 0
 
         if finished_at:
             finish = finished_at
@@ -42,8 +44,54 @@ class WorkExperience:
         return finish.year - began_at.year - ((finish.month, finish.day) < (began_at.month, began_at.day))
 
 
+class Skill:
+    def __init__(self, text):
+        self.vector = dict()
+        self.txt = text
+        self.get_vector()
+        self.len_vector = self.get_length_vector()
+
+    def get_vector(self):
+        if not self.txt:
+            self.vector = None
+
+        my_normalizer = Normalizer(statistical_space_correction=True)
+        my_tokenizer = Tokenizer()
+        normalized_text = my_normalizer.normalize(self.txt)
+        tokens = my_tokenizer.tokenize_words(normalized_text)
+        for token in tokens:
+            if token in self.vector:
+                self.vector[token] = self.vector[token] + 1
+            else:
+                self.vector[token] = 1
+
+    def get_length_vector(self):
+        if not self.vector:
+            return 0
+        sum = 0
+        for token in self.vectors:
+            sum += math.pow(self.vector[token], 2)
+
+        return math.pow(sum, 0.5)
+
+    def dot_vector(self, skill):
+        vector1 = skill.vector.keys()
+        vector2 = self.vector.keys()
+
+        if self.len_vector == 0 or skill.len_vector == 0:
+            return 0
+
+        intersect = [value for value in vector1 if value in vector2]
+
+        sum = 0
+        for token in intersect:
+            sum += (1+math.log(vector1[token], 2)) * (1+math.log(vector2[token], 2))
+
+        return sum/(self.len_vector * skill.len_vector)
+
+
 class PersonalInfo:
-    def __init__(self, job_applicant_id, steps_title, job_title, contract_type):
+    def __init__(self, job_applicant_id, steps_title, job_title, contract_type, job_skills):
         self.job_applicant_id = job_applicant_id
         self.gender = -1
         self.age = -1
@@ -61,6 +109,7 @@ class PersonalInfo:
             self.steps_title = -1
 
         self.contract_type = contract_type
+        self.job_skills = Skill(job_skills)
 
     def set_gender(self, gender):
         if not gender:
@@ -85,7 +134,7 @@ class PersonalInfo:
         self.has_language = language
 
     def add_skill(self, skill):
-        self.skills.append(skill)
+        self.skills.append(Skill(skill))
         self.num_skills += 1
 
     def add_education(self, field, university, gpa, began_at, finished_at, degree):
@@ -122,6 +171,15 @@ class PersonalInfo:
         if num == 0:
             return -1
         return sum/num
+
+    def get_sim_skills(self):
+        text_skills = ''
+        for skill in self.skills:
+            text_skills += skill + ' '
+
+        all_skills = Skill(text_skills)
+        all_skills.dot_vector(self.job_skills)
+
 
     def get_vector(self):
         personal_info = [self.job_applicant_id, self.gender, self.age, self.marriage_status,
