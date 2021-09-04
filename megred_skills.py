@@ -75,10 +75,11 @@ def calculate_age(born):
 def add_personal_info():
     query = "SELECT DISTINCT job_applicant_id, gender, birthday,  JSON_UNQUOTE(json_extract(marriage,'$.status')), " \
             "languages, job_title, " \
-            "steps_title, job_contract_type " \
+            "steps_title, job_contract_type, job_skills " \
             "FROM useful_data;"
 
     my_cursor.execute(query)
+    i = 0
     for item in my_cursor:
         job_applicant_id = item[0]
         if job_applicant_id not in resumes:
@@ -89,12 +90,15 @@ def add_personal_info():
             job_title = item[5]
             steps_title = item[6]
             contract_type = item[7]
-            person = PersonalInfo(job_applicant_id, steps_title, job_title, contract_type)
+            job_skills = item[8]
+            person = PersonalInfo(job_applicant_id, steps_title, job_title, contract_type, job_skills)
             person.set_gender(gender)
             person.set_age(birthday)
             person.set_marriage_status(marriage)
             person.set_language(language)
             resumes[job_applicant_id] = person
+            print(i)
+            i += 1
 
 
 def add_education():
@@ -104,6 +108,7 @@ def add_education():
 
     my_cursor.execute(query)
     for item in my_cursor:
+        print('wowo')
         job_applicant_id = item[0]
         degree = item[1]
         field = item[2]
@@ -165,9 +170,12 @@ def write_file():
     with open('final_data.csv', 'w', encoding='utf-8', newline='') as csv_file:
         writer = csv.writer(csv_file)
         writer.writerow(header)
+        i = 0
         for job_applicant_id in resumes:
             row = resumes[job_applicant_id].get_vector()
             writer.writerow(row)
+            print(row[8])
+            i += 1
 
 
 def write_tagged_data():
@@ -183,4 +191,3 @@ def write_tagged_data():
 
 get_people_data()
 write_file()
-# write_tagged_data()
