@@ -1,7 +1,7 @@
 import ast
 import math
 from datetime import date
-from parsivar import  Normalizer, Tokenizer, FindStems, POSTagger
+from parsivar import Normalizer, Tokenizer, FindStems, POSTagger
 
 
 my_normalizer = Normalizer(statistical_space_correction=True)
@@ -69,8 +69,8 @@ class Skill:
         for token in tokens:
             if token in self.vector:
                 self.vector[token] = self.vector[token] + 1
-            else:
-                self.vector[token] = 1
+            # else:
+            #     self.vector[token] = 1
 
         self.get_length_vector()
 
@@ -137,10 +137,10 @@ def map_level(lvl):
 class PersonalInfo:
     def __init__(self, job_applicant_id, steps_title, job_title, contract_type, job_skills):
         self.job_applicant_id = job_applicant_id
-        self.gender = -1
-        self.age = -1
+        self.gender = None
+        self.age = None
         self.num_skills = 0
-        self.marriage_status = -1
+        self.marriage_status = None
         self.language = []
         self.skills = []
         self.educations = []
@@ -149,8 +149,8 @@ class PersonalInfo:
         self.job_title = job_title
         if steps_title:
             self.steps_title = steps_title
-        else:
-            self.steps_title = -1
+        # else:
+        #     self.steps_title = -1
 
         self.contract_type = contract_type
         self.job_skills = Skill(job_skills)
@@ -163,16 +163,16 @@ class PersonalInfo:
         if birthday:
             today = date.today()
             self.age = today.year - birthday.year - ((today.month, today.day) < (birthday.month, birthday.day))
-        else:
-            self.age = -1
+        # else:
+        #     self.age = -1
 
     def set_marriage_status(self, marriage):
         if marriage:
             marriage_status = int.from_bytes(marriage, "big") - ord('0')
             if marriage_status == 0 and marriage == 1:
                 self.marriage_status = marriage_status
-        else:
-            self.marriage_status = -1
+        # else:
+        #     self.marriage_status = -1
 
     def add_skill(self, skill):
         self.skills.append(Skill(skill))
@@ -210,7 +210,7 @@ class PersonalInfo:
                 num += 1
 
         if num == 0:
-            return -1
+            return None
         return sum/num
 
     def get_sim_skills(self):
@@ -227,43 +227,43 @@ class PersonalInfo:
         return all_skills.dot_vector(self.job_skills)
 
     def set_language(self, language):
-        if language is not None:
-            res = ast.literal_eval(language.strip("[]"))
-            if 'title' not in res and type(res[0]) == dict:
-                num = len(res)
-                for languages in res:
-                    try:
-                        if 'english_title' in languages['title']:
-                            title = languages['title']['english_title']
-                            title = map_language(title)
-                            languages['title'] = title
-                            level = languages['level']['english_title']
-                            level = map_level(level)
-                            languages['level'] = level
-                            num = num * int(level)
-                            # print(num)
-                        else:
-                            num = num * int(languages['level'])
-                    except:
-                        num = num * int(languages['level'])
-                self.language = num
-            elif 'title' in res and type(res['title']) == dict:
-                num = 1
-                title = res['title']['english_title']
-                title = map_language(title)
-                res['title'] = title
-                level = res['level']['english_title']
-                level = map_level(level)
-                res['level'] = level
-                num = num * int(level)
-                self.language = num
-            else:
-                if 'title' in res:
-                    # print(res)
-                    num = 1 * int(res['level'])
-                    self.language = num
-        else:
-            self.language = -1
+        self.language = language
+        # if language is not None:
+        #     res = ast.literal_eval(language.strip("[]"))
+        #     if 'title' not in res and type(res[0]) == dict:
+        #         num = len(res)
+        #         for languages in res:
+        #             try:
+        #                 if 'english_title' in languages['title']:
+        #                     title = languages['title']['english_title']
+        #                     title = map_language(title)
+        #                     languages['title'] = title
+        #                     level = languages['level']['english_title']
+        #                     level = map_level(level)
+        #                     languages['level'] = level
+        #                     num = num + int(level)
+        #                     # print(num)
+        #                 else:
+        #                     num = num + int(languages['level'])
+        #             except:
+        #                 num = num + int(languages['level'])
+        #         self.language = num
+        #     elif 'title' in res and type(res['title']) == dict:
+        #         num = 1
+        #         title = res['title']['english_title']
+        #         title = map_language(title)
+        #         res['title'] = title
+        #         level = res['level']['english_title']
+        #         level = map_level(level)
+        #         res['level'] = level
+        #         num = num + int(level)
+        #         self.language = num
+        #     else:
+        #         if 'title' in res:
+        #             num = 1 + int(res['level'])
+        #             self.language = num
+        # else:
+        #     self.language = -1
 
     def get_language(self):
         return self.language
@@ -273,7 +273,7 @@ class PersonalInfo:
                          self.language, self.contract_type]
 
         education_info = [self.get_max_degree(), self.get_average_gpa()]
-        skill_info = [self.get_sim_skills()]
+        skill_info = [1]
         work_exp_info = [len(self.work_experiences), self.get_work_interval()]
         return personal_info + education_info + skill_info + work_exp_info + [self.steps_title]
 
