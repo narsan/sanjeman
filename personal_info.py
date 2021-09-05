@@ -162,7 +162,22 @@ class PersonalInfo:
     def set_age(self, birthday):
         if birthday:
             today = date.today()
-            self.age = today.year - birthday.year - ((today.month, today.day) < (birthday.month, birthday.day))
+            age = today.year - birthday.year - ((today.month, today.day) < (birthday.month, birthday.day))
+
+            if age < 20:
+                self.age = 1
+
+            elif 20 <= age < 30:
+                self.age = 2
+
+            elif 30 <= age < 40:
+                self.age = 3
+
+            elif 40 <= age < 50:
+                self.age = 4
+
+            elif age >= 50:
+                self.age = 5
         # else:
         #     self.age = -1
 
