@@ -242,7 +242,17 @@ class PersonalInfo:
 
         if num == 0:
             return None
-        return sum/num
+        gpa = sum/num
+        if gpa >= 17:
+            return 1
+        elif gpa >= 14:
+            return 2
+        elif gpa >= 12:
+            return 3
+        elif gpa >= 10:
+            return 4
+        else:
+            return 5
 
     def get_max_university(self):
         max_degree = self.get_max_degree()
