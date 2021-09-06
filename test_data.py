@@ -25,16 +25,15 @@ def get_data(path):
                 continue
 
             if index_steps:
-                if row[index_steps] == 'استخدام شده':
+                if row[index_steps] == '2':
                     data_accepted.append(row)
 
-                elif row[index_steps] == 'رد شده':
+                elif row[index_steps] == '3':
                     data_rejected.append(row)
 
                 elif row[index_steps] == 'تایید برای مصاحبه':
                     data_interview.append(row)
 
-    # print(data)
     return header
 
 
@@ -44,10 +43,12 @@ def separate_test_data():
     random.shuffle(data_rejected)
     random.shuffle(data_interview)
 
-    test = data_accepted[0: num_test].copy() + data_rejected[0: num_test].copy() + data_interview[0: num_test].copy()
+    test = data_accepted[0: num_test].copy() + data_rejected[0: num_test].copy() \
+           # + data_interview[0: num_test].copy()
     random.shuffle(test)
 
-    train = data_accepted[num_test+1: len(data_accepted)] + data_rejected[num_test+1: len(data_rejected)] + data_interview[num_test+1: len(data_interview)]
+    train = data_accepted[num_test+1: len(data_accepted)] + data_rejected[num_test+1: len(data_rejected)]\
+            # + data_interview[num_test+1: len(data_interview)]
     random.shuffle(train)
 
     return train, test
