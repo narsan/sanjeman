@@ -147,13 +147,29 @@ class PersonalInfo:
         self.work_experiences = []
         self.steps_title = job_title
         self.job_title = job_title
-        if steps_title:
-            self.steps_title = steps_title
+        self.map_steps_title(steps_title)
         # else:
         #     self.steps_title = -1
 
         self.contract_type = contract_type
         self.job_skills = Skill(job_skills)
+
+    def map_steps_title(self, title):
+        if title == 'نیازمند تعیین وضعیت':
+            self.steps_title = 0
+        elif title == 'تایید برای مصاحبه':
+            self.steps_title = 1
+        elif title == 'استخدام شده':
+            self.steps_title = 2
+        elif title == 'رد شده':
+            self.steps_title = 3
+        elif title == 'انصراف از مصاحبه':
+            self.steps_title = 4
+        else:
+            if title:
+                self.steps_title = 6
+            else:
+                self.steps_title = None
 
     def set_gender(self, gender):
         if not gender:
