@@ -1,9 +1,7 @@
 import csv
 
 import mysql.connector
-import pandas
 from datetime import date
-
 from personal_info import PersonalInfo
 
 
@@ -52,6 +50,8 @@ def merge_education():
             education[item[0]] = item[1]
         else:
             education[item[0]] = item[1]
+
+
 
 
 def get_marriage_status(marriage):
@@ -154,7 +154,7 @@ def get_people_data():
     add_work_exp()
 
 
-def get_applicant_info(job_applicant_id):
+def get_applicant_info():
     query = "SELECT DISTINCT job_applicant_id, gender, birthday, JSON_UNQUOTE(json_extract(marriage,'$.status')), " \
             "languages, " \
             "steps_title " + \

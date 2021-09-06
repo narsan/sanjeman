@@ -4,7 +4,7 @@ import random
 
 data_accepted = []
 data_rejected = []
-data_interview = []
+# data_interview = []
 percent_test = 0.2
 
 
@@ -31,8 +31,8 @@ def get_data(path):
                 elif row[index_steps] == '3':
                     data_rejected.append(row)
 
-                elif row[index_steps] == 'تایید برای مصاحبه':
-                    data_interview.append(row)
+                # elif row[index_steps] == '1':
+                #     data_interview.append(row)
 
     return header
 
@@ -41,13 +41,12 @@ def separate_test_data():
     num_test = int(len(data_accepted) * percent_test)
     random.shuffle(data_accepted)
     random.shuffle(data_rejected)
-    random.shuffle(data_interview)
+    # random.shuffle(data_interview)
 
     test = data_accepted[0: num_test].copy() + data_rejected[0: num_test].copy() \
            # + data_interview[0: num_test].copy()
     random.shuffle(test)
-
-    train = data_accepted[num_test+1: len(data_accepted)] + data_rejected[num_test+1: len(data_rejected)]\
+    train = data_accepted[num_test + 1: len(data_accepted)]+data_rejected[num_test+1: len(data_rejected)]\
             # + data_interview[num_test+1: len(data_interview)]
     random.shuffle(train)
 
