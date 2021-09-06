@@ -10,7 +10,7 @@ from personal_info import PersonalInfo
 skills = dict()
 education = dict()
 header = ['job_applicant_id', 'gender', 'age', 'marriage_status', 'languages', 'contract_type',
-          'degree', 'average_gpa', 'university', 'skill', 'num_prev_company', 'work_interval', 'steps_title']
+          'degree', 'average_gpa', 'skill', 'num_prev_company', 'work_interval', 'steps_title']
 
 resumes = dict()
 

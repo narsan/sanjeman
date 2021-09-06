@@ -311,7 +311,7 @@ class PersonalInfo:
         personal_info = [self.job_applicant_id, self.gender, self.age, self.marriage_status,
                          self.language, self.contract_type]
 
-        education_info = [self.get_max_degree(), self.get_average_gpa(), self.get_max_university()]
+        education_info = [self.get_max_degree(), self.get_average_gpa()]
         skill_info = [1]
         work_exp_info = [len(self.work_experiences), self.get_work_interval()]
         return personal_info + education_info + skill_info + work_exp_info + [self.steps_title]
