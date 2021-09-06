@@ -1,7 +1,6 @@
-import ast
 import math
 from datetime import date
-from parsivar import Normalizer, Tokenizer, FindStems, POSTagger
+from parsivar import Normalizer, Tokenizer
 
 
 my_normalizer = Normalizer(statistical_space_correction=True)
@@ -104,36 +103,6 @@ class Skill:
         return sum/(self.len_vector * skill.len_vector)
 
 
-def map_language(lang):
-    if lang == 'persian':
-        lang = '1'
-    elif lang == 'english':
-        lang = '2'
-    elif lang == 'arabic':
-        lang = '3'
-    elif lang == 'germany':
-        lang = '4'
-    elif lang == 'french':
-        lang = '5'
-    elif lang == 'spanish':
-        lang = '6'
-    else:
-        lang = '18'
-    return lang
-
-
-def map_level(lvl):
-    if lvl == 'beginner':
-        lvl = '1'
-    elif lvl == 'intermediate':
-        lvl = '2'
-    elif lvl == 'advanced':
-        lvl = '3'
-    elif lvl == 'native':
-        lvl = '4'
-    return lvl
-
-
 class PersonalInfo:
     def __init__(self, job_applicant_id, steps_title, job_title, contract_type, job_skills):
         self.job_applicant_id = job_applicant_id
@@ -148,9 +117,6 @@ class PersonalInfo:
         self.steps_title = job_title
         self.job_title = job_title
         self.map_steps_title(steps_title)
-        # else:
-        #     self.steps_title = -1
-
         self.contract_type = contract_type
         self.job_skills = Skill(job_skills)
 
@@ -194,16 +160,12 @@ class PersonalInfo:
 
             elif age >= 50:
                 self.age = 5
-        # else:
-        #     self.age = -1
 
     def set_marriage_status(self, marriage):
         if marriage:
             marriage_status = int.from_bytes(marriage, "big") - ord('0')
             if marriage_status == 0 and marriage == 1:
                 self.marriage_status = marriage_status
-        # else:
-        #     self.marriage_status = -1
 
     def add_skill(self, skill):
         self.skills.append(Skill(skill))
@@ -267,42 +229,7 @@ class PersonalInfo:
 
     def set_language(self, language):
         self.language = language
-        # if language is not None:
-        #     res = ast.literal_eval(language.strip("[]"))
-        #     if 'title' not in res and type(res[0]) == dict:
-        #         num = len(res)
-        #         for languages in res:
-        #             try:
-        #                 if 'english_title' in languages['title']:
-        #                     title = languages['title']['english_title']
-        #                     title = map_language(title)
-        #                     languages['title'] = title
-        #                     level = languages['level']['english_title']
-        #                     level = map_level(level)
-        #                     languages['level'] = level
-        #                     num = num + int(level)
-        #                     # print(num)
-        #                 else:
-        #                     num = num + int(languages['level'])
-        #             except:
-        #                 num = num + int(languages['level'])
-        #         self.language = num
-        #     elif 'title' in res and type(res['title']) == dict:
-        #         num = 1
-        #         title = res['title']['english_title']
-        #         title = map_language(title)
-        #         res['title'] = title
-        #         level = res['level']['english_title']
-        #         level = map_level(level)
-        #         res['level'] = level
-        #         num = num + int(level)
-        #         self.language = num
-        #     else:
-        #         if 'title' in res:
-        #             num = 1 + int(res['level'])
-        #             self.language = num
-        # else:
-        #     self.language = -1
+
 
     def get_language(self):
         return self.language
