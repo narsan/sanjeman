@@ -228,6 +228,14 @@ class PersonalInfo:
             return None
         return sum/num
 
+    def get_max_university(self):
+        max_degree = self.get_max_degree()
+        for education in self.educations:
+            if education.degree == max_degree:
+                return education.university
+
+        return None
+
     def get_sim_skills(self):
         if len(self.skills) == 0:
             return 0
@@ -287,7 +295,7 @@ class PersonalInfo:
         personal_info = [self.job_applicant_id, self.gender, self.age, self.marriage_status,
                          self.language, self.contract_type]
 
-        education_info = [self.get_max_degree(), self.get_average_gpa()]
+        education_info = [self.get_max_degree(), self.get_average_gpa(), self.get_max_university()]
         skill_info = [1]
         work_exp_info = [len(self.work_experiences), self.get_work_interval()]
         return personal_info + education_info + skill_info + work_exp_info + [self.steps_title]
