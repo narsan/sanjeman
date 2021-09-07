@@ -177,17 +177,29 @@ def write_file():
             i += 1
 
 
-def write_data(path, tag):
-    with open(path, 'w', encoding='utf-8', newline='') as csv_file:
+def write_tagged_data():
+    with open('tagged_data.csv', 'w', encoding='utf-8', newline='') as csv_file:
         writer = csv.writer(csv_file)
         writer.writerow(header)
         for job_applicant_id in resumes:
             row = resumes[job_applicant_id].get_vector()
             print(row)
-            if row[-1] == tag:
+            if row[-1] == 2 or row[-1] == 3:
+                writer.writerow(row)
+
+
+def write_untagged_data():
+    with open('untagged_data.csv', 'w', encoding='utf-8', newline='') as csv_file:
+        writer = csv.writer(csv_file)
+        writer.writerow(header)
+        for job_applicant_id in resumes:
+            row = resumes[job_applicant_id].get_vector()
+            print(row)
+            if row[-1] == 0:
                 writer.writerow(row)
 
 
 get_people_data()
 write_file()
-write_data('untagged_data.csv', 0)
+write_tagged_data()
+write_untagged_data()
