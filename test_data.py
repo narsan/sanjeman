@@ -56,9 +56,7 @@ def separate_test_data():
 def write_in_file(data, path, header):
     with open(path, 'w', encoding='utf-8', newline='') as csv_file:
         writer = csv.writer(csv_file)
-
         writer.writerow(header)
-
         for row in data:
             writer.writerow(row)
 
