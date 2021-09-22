@@ -2,7 +2,6 @@ import math
 from datetime import date
 from parsivar import Normalizer, Tokenizer
 
-
 my_normalizer = Normalizer(statistical_space_correction=True)
 my_tokenizer = Tokenizer()
 
